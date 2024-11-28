@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previously Uploaded Images</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Agdasima:wght@400;700&family=Doto:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Doto', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            font-weight: bolder;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            width: 100%;
+            max-width: 1200px;
+            justify-content: center; /* Center the gallery items */
+        }
+        .uploads-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+        }
+        .uploads-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .uploads-container img:hover {
+            transform: scale(1.05);
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            text-decoration: none;
+            color: #333;
+            background: #fff;
+            padding: 10px 15px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s, transform 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-button:hover {
+            background: #e0e0e0;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-button">&larr;</a>
+    <h1>Gallery</h1>
+    <div class="uploads-container">
+        <div class="gallery">
+            {% for file in files %}
+                <div class="result-item">
+                    <img src="{{ url_for('static', filename='uploads/' ~ file) }}" alt="{{ file }}">
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('.uploads-container img');
+            const modal = document.createElement('div');
+            modal.style.display = 'none';
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.style.zIndex = '1000';
+            document.body.appendChild(modal);
+
+            const modalImage = document.createElement('img');
+            modalImage.style.maxWidth = '90%';
+            modalImage.style.maxHeight = '90%';
+            modal.appendChild(modalImage);
+
+            const closeButton = document.createElement('span');
+            closeButton.textContent = '×';
+            closeButton.style.position = 'absolute';
+            closeButton.style.top = '20px';
+            closeButton.style.right = '20px';
+            closeButton.style.fontSize = '30px';
+            closeButton.style.color = '#fff';
+            closeButton.style.cursor = 'pointer';
+            modal.appendChild(closeButton);
+
+            images.forEach(image => {
+                image.addEventListener('click', function() {
+                    modalImage.src = this.src;
+                    modal.style.display = 'flex';
+                });
+            });
+
+            closeButton.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

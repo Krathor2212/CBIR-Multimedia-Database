@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Agdasima:wght@400;700&family=Doto:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Doto', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            font-weight: bolder;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+        .result-item {
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+        }
+        .result-item img {
+            margin-right: 20px;
+            max-width: 150px;
+            border-radius: 8px;
+        }
+        .result-item .details {
+            max-width: 200px;
+        }
+        .result-item .details p {
+            margin: 5px 0;
+        }
+        .result-item .details p strong {
+            color: #4CAF50;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search Results</h1>
+    <div>
+        {% for result in results %}
+            <div class="result-item">
+                {% if 'static/uploads' in result['path'] %}
+                    <img src="{{ result['path'] }}" alt="{{ result['name'] }}">
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/' + result['path'].replace('\\', '/').split('/')[-1]) }}" alt="{{ result['name'] }}">
+                {% endif %}
+                <div class="details">
+                    <p><strong>Name:</strong> {{ result['name'] }}</p>
+                    <p><strong>Score:</strong> {{ result['score'] }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <a href="/">Go Back</a>
+</body>
+</html>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const images = document.querySelectorAll('.result-item img');
+        const modal = document.createElement('div');
+        modal.style.display = 'none';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        modal.style.justifyContent = 'center';
+        modal.style.alignItems = 'center';
+        modal.style.zIndex = '1000';
+        document.body.appendChild(modal);
+
+        const modalImage = document.createElement('img');
+        modalImage.style.maxWidth = '90%';
+        modalImage.style.maxHeight = '90%';
+        modal.appendChild(modalImage);
+
+        const closeButton = document.createElement('span');
+        closeButton.textContent = '×';
+        closeButton.style.position = 'absolute';
+        closeButton.style.top = '20px';
+        closeButton.style.right = '20px';
+        closeButton.style.fontSize = '30px';
+        closeButton.style.color = '#fff';
+        closeButton.style.cursor = 'pointer';
+        modal.appendChild(closeButton);
+
+        images.forEach(image => {
+            image.addEventListener('click', function() {
+                modalImage.src = this.src;
+                modal.style.display = 'flex';
+            });
+        });
+
+        closeButton.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+</script>
